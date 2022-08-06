@@ -23,7 +23,7 @@
   echo exit
   pause
 
-:continue  
+:continue
   echo [40;32mChecking Windows image diagnostics...
   Dism /Online /Cleanup-Image /CheckHealth
   echo.
@@ -34,13 +34,7 @@
   pause 
   echo [40;32mremoving windows watermark
   bcedit -set TESTSIGNING OFF
-
-
-
-
-
-
-
-  echo [40;33mRestart PC to remove windows activation mark..
-  pause
-
+  del /s /f /q %userprofile%\Recent\*.*
+  del /s /f /q C:\Windows\Prefetch\*.*
+  del /s /f /q C:\Windows\Temp\*.*
+  del /s /f /q %USERPROFILE%\appdata\local\temp\*.*
