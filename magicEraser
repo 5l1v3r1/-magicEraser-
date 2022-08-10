@@ -1,0 +1,86 @@
+@echo off
+  mode con cols=80 lines=25
+  chcp 65001
+  cls
+  title MagicEraser by guap#0420
+
+:AdminCheck
+  NET FILE 1>NUL 2>NUL
+  if '%errorlevel%' == '0' ( goto Pass) else ( goto Fail )
+
+
+:Fail
+  echo.[40;33mPlease run as admin.
+  ping localhost -n 4 >nul
+  exit
+
+:pass
+  Echo Are you sure you want to continue?
+  set /p prompt1= Y/N : 
+  if '%prompt1%' == 'Y' ( goto Continue ) else ( goto 1 ) 
+
+:1 
+  echo exit
+  pause
+
+:continue
+  echo [40;32mChecking Windows image diagnostics...
+  Dism /Online /Cleanup-Image /CheckHealth
+  echo.
+  echo.
+  net user
+  echo.
+  echo [40;33mYOU SHOULD BE ADMINISTRATOR
+  pause 
+  echo [40;32mremoving windows watermark
+  bcedit -set TESTSIGNING OFF
+:: cache clearing
+  del /s /f /q %userprofile%\Recent\*.*
+  del /s /f /q C:\Windows\Prefetch\*.*
+  del /s /f /q C:\Windows\Temp\*.*
+  del /s /f /q %USERPROFILE%\appdata\local\temp\*.*
+  del /F /Q %APPDATA%\Microsoft\Windows\Recent\*
+  del /F /Q %APPDATA%\Microsoft\Windows\Recent\AutomaticDestinations\*
+  del /F /Q %APPDATA%\Microsoft\Windows\Recent\CustomDestinations\*
+  REG Delete HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\RunMRU /VA /F
+  REG Delete HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\TypedPaths /VA /F
+
+
+:: clearing temp
+  forfiles /p "%systemdrive%\Users\%username%\AppData\Local\Temp" /s /m *.* /C "cmd /c del /q @path"
+
+:: Deletes the config files
+  cd Documents
+  del /q "%systemdrive%\Users\%username%\Documents\*.cfg"
+  del /q "%systemdrive%\Users\%username%\Documents\*.ini"
+
+:: extra specific cleaning
+::  cd %systemdrive%
+::  @RD /S /Q "%systemdrive%\Infinity.space"
+
+
+:: Clear bin
+  cls
+  echo Clearing recyclebin this could take a minute.
+  powershell.exe Clear-RecycleBin -Force
+:: Clear recent
+
+
+  Del /F /Q %APPDATA%\Microsoft\Windows\Recent\*
+  Del /F /Q %APPDATA%\Microsoft\Windows\Recent\AutomaticDestinations\*
+  Del /F /Q %APPDATA%\Microsoft\Windows\Recent\CustomDestinations\*
+  REG Delete HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\RunMRU /VA /F
+  REG Delete HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\TypedPaths /VA /F 
+  del /s /f /q %userprofile%\Recent\*.*
+  del /s /f /q C:\Windows\Prefetch\*.*
+  del /s /f /q C:\Windows\Temp\*.*
+  del /s /f /q %USERPROFILE%\appdata\local\temp\*.*
+  del /F /Q %APPDATA%\Microsoft\Windows\Recent\*
+  del /F /Q %APPDATA%\Microsoft\Windows\Recent\AutomaticDestinations\*
+  del /F /Q %APPDATA%\Microsoft\Windows\Recent\CustomDestinations\*
+  REG Delete HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\RunMRU /VA /F
+  REG Delete HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\TypedPaths /VA /F
+:: End bit
+  cls
+  echo done.
+  pause
